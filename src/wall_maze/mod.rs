@@ -19,8 +19,6 @@ pub enum Orientation {
     Horizontal,
     Vertical,
 }
-
-
 use Orientation::*;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -29,7 +27,6 @@ pub struct Wall {
     y: usize,
     orientation: Orientation,
 }
-
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct InteriorWall<const WIDTH: usize, const HEIGHT: usize> {
