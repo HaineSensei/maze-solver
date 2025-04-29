@@ -3,13 +3,12 @@ use std::{collections::HashMap, hash::Hash};
 pub mod wall_maze;
 
 pub trait MazeCell {
-    fn adjacent_cells(&self) -> impl Iterator<Item = Self>;
+    fn adjacent_cells(&self) -> impl Iterator<Item = &Self>;
 }
-
 pub fn are_adjacent<T: MazeCell + PartialEq>(cell1: &T, cell2: &T) -> bool {
     let adjacent = cell1.adjacent_cells();
     for adj in adjacent {
-        if adj == *cell2 {
+        if adj == cell2 {
             return true;
         }
     }
@@ -73,7 +72,7 @@ pub trait WallMaze: Maze {
                 unchecked.push(adj.clone());
                 let mut new_path = path_to.get(&current).unwrap().clone();
                 new_path.push(adj.clone());
-                path_to.insert(adj, new_path);
+                path_to.insert(adj.clone(), new_path);
             }
         }
         Some(path_to.get(&self.end()).unwrap().clone())
@@ -109,13 +108,15 @@ pub trait HeuristicWallMaze: WallMaze where Self::Cell: PathHeuristic {
                 unchecked.push(adj.clone());
                 let mut new_path = path_to.get(&current).unwrap().clone();
                 new_path.push(adj.clone());
-                path_to.insert(adj, new_path);
+                path_to.insert(adj.clone(), new_path);
             }
         }
         Some(path_to.get(&self.end()).unwrap().clone())
     }
 
 }
+
+impl<T: WallMaze> HeuristicWallMaze for T where T::Cell: PathHeuristic {}
 
 pub trait MutSolubleMaze: Maze {
     fn move_start(&mut self, new_start: Self::Cell) -> Result<(), String>;
